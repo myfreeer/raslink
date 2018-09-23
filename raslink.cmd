@@ -17,17 +17,11 @@ pushd "%~dp0"
 title rasdial(pppoe)
 :Main
 call :BeginDateAndTime
-set v4dns1=223.5.5.5
-set v4dns2=223.6.6.6
-set v6dns=2001:470:20::2
 set _u=USERNAME HERE
 set _p=PASSWORD HERE
-FOR /F "skip=4 eol=命 DELIMS= " %%l IN ('net share') DO @net share %%l /delete
 if not exist %ALLUSERSPROFILE%\Microsoft\Network\Connections\Pbk ( md %ALLUSERSPROFILE%\Microsoft\Network\Connections\Pbk\ ) else ( rasphone.exe /h 宽带连接 )
 copy /y "%~dp0\rasphone.pbk" "%ALLUSERSPROFILE%\Microsoft\Network\Connections\Pbk\rasphone.pbk"||pause
 rasdial.exe 宽带连接 %_u% %_p% ||rasdial.exe 宽带连接 %_u% %_p% /PHONEBOOK:"%ALLUSERSPROFILE%\Microsoft\Network\Connections\Pbk\rasphone.pbk ||rasdial.exe 宽带连接 %_u% %_p% /PHONEBOOK:"%~dp0\rasphone.pbk"||pause
-call :antispy
-ping -n 1 2001:4860:4860::8888 >nul && call :ipv6 ||call :ipv4
 call :EndDateAndTime
 timeout /t 1200
 
@@ -36,62 +30,6 @@ rasphone.exe /h 宽带连接
 rasdial.exe 宽带连接 %_u% %_p% ||rasdial.exe 宽带连接 %_u% %_p% /PHONEBOOK:"%ALLUSERSPROFILE%\Microsoft\Network\Connections\Pbk\rasphone.pbk ||rasdial.exe 宽带连接 %_u% %_p% /PHONEBOOK:"%~dp0\rasphone.pbk"||rasphone.exe /h 宽带连接
 timeout /t 620
 goto :Keep-alive
-
-:ipv6
-echo ipv6 enabled
-attrib -r -s -h %systemroot%\system32\drivers\etc\hosts
-if exist hosts.txt type hosts.txt >%systemroot%\system32\drivers\etc\hosts
-attrib +r %systemroot%\system32\drivers\etc\hosts
-exit /B
-
-:ipv4
-echo ipv4 only
-attrib -r -s -h %systemroot%\system32\drivers\etc\hosts
-if exist hostsv4.txt type hostsv4.txt >%systemroot%\system32\drivers\etc\hosts
-attrib +r %systemroot%\system32\drivers\etc\hosts
-exit /B
-
-:antispy
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Office\Office ClickToRun Service Monitor" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Office\OfficeTelemetryAgentFallBack2016" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Office\OfficeTelemetryAgentLogOn2016" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Shell\FamilySafetyMonitor" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Shell\FamilySafetyRefresh" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Application Experience\AitAgent" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Application Experience\ProgramDataUpdater" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Application Experience\StartupAppTask" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Autochk\Proxy" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Customer Experience Improvement Program\BthSQM" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Customer Experience Improvement Program\Consolidator" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Office\OfficeTelemetry\AgentFallBack2016" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Office\OfficeTelemetry\OfficeTelemetryAgentLogOn2016" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Maintenance\WinSAT" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\ActivateWindowsSearch" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\ConfigureInternetTimeService" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\DispatchRecoveryTasks" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\ehDRMInit" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\InstallPlayReady" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\mcupdate" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\MediaCenterRecoveryTask" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\ObjectStoreRecoveryTask" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\OCURActivate" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\OCURDiscovery" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\PBDADiscovery" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\PBDADiscoveryW1" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\PBDADiscoveryW2" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\PvrRecoveryTask" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\PvrScheduleTask" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\RegisterSearch" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\ReindexSearchRoot" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\SqlLiteRecoveryTask" >nul 2>nul
-@SCHTASKS /Change /DISABLE /TN "Microsoft\Windows\Media Center\UpdateRecordPath" >nul 2>nul
-exit /B
-
 
 :BeginDateAndTime
 set start=%time%
